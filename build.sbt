@@ -4,14 +4,12 @@ import Settings._
 scalaVersion in ThisBuild := scalaVersionUsed
 
 lazy val root = project.root
-  .setName("Linkuisotor")
-  .setDescription("Serializes objects into HATEOAS representation")
   .configureRoot
-  .aggregate(common)
+  .aggregate(core)
 
-lazy val common = project.from("common")
-  .setName("Linkuisotor")
-  .setDescription("Serializes objects into HATEOAS representation")
+lazy val core = project.from("core")
+  .setName("linkuisotor-core")
+  .setDescription("Serializes objects into HATEOAS representation using Circe.io")
   .setInitialCommand("_")
   .configureModule
   .configureTests()

@@ -6,14 +6,11 @@ dependencyOverrides in ThisBuild ++= Set(
   "com.github.mpilquist" % "simulacrum_2.12" % "0.10.0",
   "io.circe" % "circe-core_2.12" % "0.7.0",
   "io.circe" % "circe-generic_2.12" % "0.7.0",
-  "io.circe" % "circe-jawn_2.12" % "0.7.0",
   "io.circe" % "circe-numbers_2.12" % "0.7.0",
-  "io.circe" % "circe-parser_2.12" % "0.7.0",
-  "org.spire-math" % "jawn-parser_2.12" % "0.10.4",
   "org.typelevel" % "cats-core_2.12" % "0.9.0",
   "org.typelevel" % "cats-kernel_2.12" % "0.9.0",
   "org.typelevel" % "cats-macros_2.12" % "0.9.0",
   "org.typelevel" % "machinist_2.12" % "0.6.1",
   "org.typelevel" % "macro-compat_2.12" % "1.1.1"
 )
-// LIBRARY_DEPENDENCIES_HASH c4deee94862d10c2eea5fa7b55720e8052d66216
+// LIBRARY_DEPENDENCIES_HASH 8e1153314c053d821ba45483148ddc163327593e

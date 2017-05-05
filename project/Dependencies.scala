@@ -12,18 +12,14 @@ object Dependencies {
 
   // resolvers
   val resolvers = Seq(
-    Resolver sonatypeRepo "public",
-    Resolver typesafeRepo "releases",
-    Resolver.bintrayRepo("cakesolutions", "maven")
+    Resolver typesafeRepo "releases"
   )
 
   val circeCore    = "io.circe" %% "circe-core"    % circeVersion
   val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
-  val circeParser  = "io.circe" %% "circe-parser"  % circeVersion
 
   // testing
-  val spec2Core       = "org.specs2" %% "specs2-core"       % specs2Version
-  val spec2JUnit      = "org.specs2" %% "specs2-junit"      % specs2Version
+  val spec2Core = "org.specs2" %% "specs2-core" % specs2Version
 }
 
 trait Dependencies {
@@ -33,9 +29,9 @@ trait Dependencies {
   // resolvers
   val commonResolvers = resolvers
 
-  val mainDeps = Seq(circeCore, circeGeneric, circeParser)
+  val mainDeps = Seq(circeCore, circeGeneric)
 
-  val testDeps = Seq(spec2Core, spec2JUnit)
+  val testDeps = Seq(spec2Core)
 
   implicit class ProjectRoot(project: Project) {
 

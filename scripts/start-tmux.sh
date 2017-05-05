@@ -16,35 +16,15 @@ function initiate-tmux() {
   select-pane $MainW -R; send-to $MainW Enter;
   rename-window $MainW 'root';
 
-  CommonW=$TmuxSessionName:1
-  new-window-splitwh-setup $CommonW 'modules/common' 'Common';
-  select-pane $CommonW -L;
-  send-to $CommonW \
+  CoreW=$TmuxSessionName:1
+  new-window-splitwh-setup $CoreW 'modules/core' 'Core';
+  select-pane $CoreW -L;
+  send-to $CoreW \
       '../..' Enter \
       'sbt' Enter \
-      'project common' Enter \
+      'project core' Enter \
   ;
-  select-pane $CommonW -R;
-
-  FirstW=$TmuxSessionName:2
-  new-window-splitwh-setup $FirstW 'modules/first' 'First';
-  select-pane $FirstW -L;
-  send-to $FirstW \
-      '../..' Enter \
-      'sbt' Enter \
-      'project first' Enter \
-  ;
-  select-pane $FirstW -R;
-
-  SecondW=$TmuxSessionName:4
-  new-window-splitwh-setup $SecondW 'modules/second' 'Second';
-  select-pane $SecondW -L;
-  send-to $SecondW \
-      '../..' Enter \
-      'sbt' Enter \
-      'project second' Enter \
-  ;
-  select-pane $SecondW -R;
+  select-pane $CoreW -R;
 
   select-window $MainW;
 }

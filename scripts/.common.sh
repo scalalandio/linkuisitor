@@ -1,6 +1,6 @@
 export ScriptsRel=`basename "${0:a:h}"`
 export TmuxInitDir=`dirname "${0:a:h}"`
-export TmuxSessionName='Circehateoas'
+export TmuxSessionName='linkuisitor'
 
 setopt IGNORE_EOF
 
