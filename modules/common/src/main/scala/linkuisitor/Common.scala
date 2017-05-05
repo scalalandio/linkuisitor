@@ -1,0 +1,3 @@
+package linkuisitor
+
+object Common
