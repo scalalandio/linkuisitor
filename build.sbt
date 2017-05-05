@@ -8,7 +8,7 @@ lazy val root = project.root
   .aggregate(core)
 
 lazy val core = project.from("core")
-  .setName("linkuisotor-core")
+  .setName("linkuisitor-core")
   .setDescription("Serializes objects into HATEOAS representation using Circe.io")
   .setInitialCommand("_")
   .configureModule
