@@ -17,7 +17,7 @@ class EncodersSpec extends Specification {
   )
 
   case class TestOuter(
-    seq: Seq[Linked[TestInner]]
+    seq: Seq[WithHateoas[TestInner]]
   )
 
   implicit val testOuterLinks: LinkProvider[TestOuter] = (_: TestOuter) => Map(
@@ -35,10 +35,10 @@ class EncodersSpec extends Specification {
       import io.circe.syntax._
       import linkuisitor.format.plain._
 
-      val testOuter = Linked(TestOuter(Seq(
-        Linked(TestInner("fizz", 1)),
-        Linked(TestInner("buzz", 2)),
-        Linked(TestInner("bar", 3))
+      val testOuter = WithHateoas(TestOuter(Seq(
+        WithHateoas(TestInner("fizz", 1)),
+        WithHateoas(TestInner("buzz", 2)),
+        WithHateoas(TestInner("bar", 3))
       )))
 
       // when
