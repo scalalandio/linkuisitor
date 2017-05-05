@@ -7,7 +7,7 @@ object Dependencies {
   // scala version
   val scalaVersion = "2.12.2"
 
-  val monixVersion = "2.2.3"
+  val circeVersion   = "0.7.0"
   val specs2Version = "3.8.9"
 
   // resolvers
@@ -17,25 +17,13 @@ object Dependencies {
     Resolver.bintrayRepo("cakesolutions", "maven")
   )
 
-  val scalaConfig = "com.typesafe" % "config" % "1.3.1"
-  val pureConfig  = "com.github.melrief" %% "pureconfig" % "0.6.0"
-
-  // async
-  val monix     = "io.monix" %% "monix"      % monixVersion
-  val monixCats = "io.monix" %% "monix-cats" % monixVersion
-
-  // functional libraries
-  val cats = "org.typelevel" %% "cats" % "0.9.0"
-
-  // logging
-  val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-  val logback      = "ch.qos.logback" % "logback-classic" % "1.2.2"
+  val circeCore    = "io.circe" %% "circe-core"    % circeVersion
+  val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
+  val circeParser  = "io.circe" %% "circe-parser"  % circeVersion
 
   // testing
   val spec2Core       = "org.specs2" %% "specs2-core"       % specs2Version
   val spec2JUnit      = "org.specs2" %% "specs2-junit"      % specs2Version
-  val spec2Mock       = "org.specs2" %% "specs2-mock"       % specs2Version
-  val spec2Scalacheck = "org.specs2" %% "specs2-scalacheck" % specs2Version
 }
 
 trait Dependencies {
@@ -45,9 +33,9 @@ trait Dependencies {
   // resolvers
   val commonResolvers = resolvers
 
-  val mainDeps = Seq(cats, scalaConfig, pureConfig, monix, monixCats, scalaLogging, logback)
+  val mainDeps = Seq(circeCore, circeGeneric, circeParser)
 
-  val testDeps = Seq(spec2Core, spec2JUnit, spec2Mock, spec2Scalacheck)
+  val testDeps = Seq(spec2Core, spec2JUnit)
 
   implicit class ProjectRoot(project: Project) {
 

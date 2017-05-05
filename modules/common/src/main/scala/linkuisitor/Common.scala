@@ -1,3 +1,0 @@
-package linkuisitor
-
-object Common

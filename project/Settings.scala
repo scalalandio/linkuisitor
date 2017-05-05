@@ -37,7 +37,6 @@ object Settings extends Dependencies {
       "-language:implicitConversions",
       "-language:postfixOps",
       "-Yno-adapted-args",
-      "-Yno-predef",
       "-Ywarn-dead-code",
       "-Ywarn-extra-implicit",
       "-Ywarn-inaccessible",
