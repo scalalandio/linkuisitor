@@ -1,5 +1,7 @@
 # Linkuisitor
 
+[![Build Status](https://travis-ci.org/MateuszKubuszok/linkuisitor.svg?branch=master)](https://travis-ci.org/MateuszKubuszok/linkuisitor)
+
 Plebeian-simple library for generating HATEOAS JSONs with Circe.
 
 ## Usage
