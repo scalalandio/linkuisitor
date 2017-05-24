@@ -1,3 +1,4 @@
+import com.typesafe.sbt.GitVersioning
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.SbtScalariform._
 import sbt.TestFrameworks.Specs2
@@ -138,7 +139,7 @@ object Settings extends Dependencies {
 
   implicit class ModuleConfigurator(project: Project) {
 
-    def configureModule: Project = project.settings(modulesSettings: _*)
+    def configureModule: Project = project.settings(modulesSettings: _*).enablePlugins(GitVersioning)
   }
 
   implicit class UnitTestConfigurator(project: Project) extends TestConfigurator(project, Test) {
