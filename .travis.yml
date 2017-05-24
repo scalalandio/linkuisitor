@@ -12,7 +12,7 @@ install:
               - sudo apt-get update
               - sudo apt-get install zsh
               - sudo chmod +x scripts/*
-              - scripts/sbt update
+              - sbt update
 script:         scripts/run-all-tests.sh
 after_script:
               - scripts/prepare-test-results-for-ci.sh
