@@ -27,8 +27,8 @@ lazy val core = project.from("core")
     homepage := Some(url("http://github.com/MateuszKubuszok/linkuisitor")),
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     scmInfo := Some(ScmInfo(
-      url("https://github.com/MateuszKubuszok/linkuisitor"),
-      "scm:git:git@github.com:MateuszKubuszok/linkuisitor.git"
+      url("https://github.com/scalalandio/linkuisitor"),
+      "scm:git:git@github.com:scalalandio/linkuisitor.git"
     )),
     publishTo := Some({
       val nexus = "https://oss.sonatype.org/"

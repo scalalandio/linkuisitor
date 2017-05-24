@@ -1,4 +1,4 @@
-package linkuisitor
+package io.scalaland.linkuisitor
 
 class WithHateoas[T: LinkProvider](val entity: T) {
 

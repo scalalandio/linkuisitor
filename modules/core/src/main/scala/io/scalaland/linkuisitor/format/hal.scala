@@ -1,9 +1,9 @@
-package linkuisitor.format
+package io.scalaland.linkuisitor.format
 
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import linkuisitor.{ FlatLinkDetails, GroupedLinkDetails, LinkDetails, WithHateoas }
+import io.scalaland.linkuisitor.{ FlatLinkDetails, GroupedLinkDetails, LinkDetails, WithHateoas }
 
 trait hal {
 

@@ -7,7 +7,7 @@ object Dependencies {
   // scala version
   val scalaVersion = "2.12.2"
 
-  val circeVersion   = "0.7.0"
+  val circeVersion   = "0.8.0"
   val specs2Version = "3.8.9"
 
   // resolvers

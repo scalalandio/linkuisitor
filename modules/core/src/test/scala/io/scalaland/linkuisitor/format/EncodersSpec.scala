@@ -1,9 +1,9 @@
-package linkuisitor.format
+package io.scalaland.linkuisitor.format
 
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import linkuisitor._
+import io.scalaland.linkuisitor._
 import org.specs2.mutable.Specification
 import org.specs2.specification.Scope
 
@@ -43,7 +43,7 @@ class EncodersSpec extends Specification {
 
     "encode data into { entity: { [properties] }, links: { [links] } }" in new TestDataSerialization {
       // given
-      import linkuisitor.format.plain._
+      import io.scalaland.linkuisitor.format.plain._
 
       // when
       val result = testOuter.asJson.pretty(Printer.spaces2.copy(dropNullKeys = true))
@@ -58,55 +58,61 @@ class EncodersSpec extends Specification {
            |          "module" : "fizz",
            |          "page" : 1
            |        },
-           |        "links" : {
-           |          "self" : {
+           |        "links" : [
+           |          {
+           |            "rel" : "self",
            |            "href" : "/api/fizz/page/1"
            |          },
-           |          "next" : {
+           |          {
+           |            "rel" : "next",
            |            "href" : "/api/fizz/page/2"
            |          }
-           |        }
+           |        ]
            |      },
            |      {
            |        "entity" : {
            |          "module" : "buzz",
            |          "page" : 2
            |        },
-           |        "links" : {
-           |          "self" : {
+           |        "links" : [
+           |          {
+           |            "rel" : "self",
            |            "href" : "/api/buzz/page/2"
            |          },
-           |          "next" : {
+           |          {
+           |            "rel" : "next",
            |            "href" : "/api/buzz/page/3"
            |          }
-           |        }
+           |        ]
            |      },
            |      {
            |        "entity" : {
            |          "module" : "bar",
            |          "page" : 3
            |        },
-           |        "links" : {
-           |          "self" : {
+           |        "links" : [
+           |          {
+           |            "rel" : "self",
            |            "href" : "/api/bar/page/3"
            |          },
-           |          "next" : {
+           |          {
+           |            "rel" : "next",
            |            "href" : "/api/bar/page/4"
            |          }
-           |        }
+           |        ]
            |      }
            |    ]
            |  },
-           |  "links" : {
-           |    "self" : [
-           |      {
-           |        "href" : "/api/stuff"
-           |      },
-           |      {
-           |        "href" : "/api/other"
-           |      }
-           |    ]
-           |  }
+           |  "links" : [
+           |    {
+           |      "rel" : "self",
+           |      "href" : "/api/stuff"
+           |    },
+           |    {
+           |      "rel" : "self",
+           |      "href" : "/api/other"
+           |    }
+           |  ]
            |}""".stripMargin
     }
   }
@@ -115,7 +121,7 @@ class EncodersSpec extends Specification {
 
     "encode data into { [properties], _links: { [links] } }" in new TestDataSerialization {
       // given
-      import linkuisitor.format.hal._
+      import io.scalaland.linkuisitor.format.hal._
 
       // when
       val result = testOuter.asJson.pretty(Printer.spaces2.copy(dropNullKeys = true))

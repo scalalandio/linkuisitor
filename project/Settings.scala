@@ -16,7 +16,7 @@ object Settings extends Dependencies {
   val FunctionalTest: Configuration = config("fun") extend Test describedAs "Runs only functional tests"
 
   private val commonSettings = Seq(
-    organization    := "org.github.mateuszkubuszok",
+    organization    := "io.scalaland",
     git.baseVersion := "0.1.0",
 
     scalaVersion := scalaVersionUsed
@@ -128,7 +128,7 @@ object Settings extends Dependencies {
     def setDescription(newDescription: String): Project = project.settings(description := newDescription)
 
     def setInitialCommand(newInitialCommand: String): Project =
-      project.settings(initialCommands := s"import linkuisitor.$newInitialCommand")
+      project.settings(initialCommands := s"import io.scalaland.linkuisitor.$newInitialCommand")
   }
 
   implicit class RootConfigurator(project: Project) {

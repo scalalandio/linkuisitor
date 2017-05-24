@@ -1,4 +1,4 @@
-package linkuisitor
+package io.scalaland.linkuisitor
 
 sealed trait LinkDetails
 

@@ -1,4 +1,4 @@
-package linkuisitor
+package io.scalaland.linkuisitor
 
 sealed trait HttpMethod { val name: String; override def toString: String = name }
 object HttpMethod {
