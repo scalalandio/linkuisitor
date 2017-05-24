@@ -18,7 +18,7 @@ object Settings extends Dependencies {
 
   private val commonSettings = Seq(
     organization    := "io.scalaland",
-    git.baseVersion := "0.1.0",
+    git.baseVersion := "0.2.0",
 
     scalaVersion := scalaVersionUsed
   )
