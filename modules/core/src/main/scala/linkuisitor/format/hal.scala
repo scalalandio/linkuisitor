@@ -5,7 +5,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import linkuisitor.{ FlatLinkDetails, GroupedLinkDetails, LinkDetails, WithHateoas }
 
-package object hal {
+trait hal {
 
   implicit val linkDetailsEncoder: Encoder[LinkDetails] = {
     case ld: FlatLinkDetails    => ld.asJson
@@ -15,3 +15,5 @@ package object hal {
   implicit def linkedEncoder[T: Encoder]: Encoder[WithHateoas[T]] = (linked: WithHateoas[T]) =>
     Encoder[T].apply(linked.entity).withObject(_.add("_links", linked.links.asJson).asJson)
 }
+
+object hal extends hal
