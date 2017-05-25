@@ -8,4 +8,6 @@ trait LinkProvider[T] {
 object LinkProvider {
 
   def apply[T: LinkProvider]: LinkProvider[T] = implicitly[LinkProvider[T]]
+
+  def empty[T]: LinkProvider[T] = _ => Map.empty
 }
