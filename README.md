@@ -5,6 +5,10 @@
 
 Plebeian-simple library for generating HATEOAS JSONs with Circe.
 
+## Adding to project
+
+    libraryDependencies += "io.scalaland" %% "linkuisitor-core" % "0.1.0"
+
 ## Usage
 
     import io.circe._
