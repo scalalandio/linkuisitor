@@ -5,10 +5,13 @@ import Dependencies._
 object Dependencies {
 
   // scala version
-  val scalaVersion = "2.12.2"
+  val scalaVersion = "2.12.4"
 
-  val circeVersion   = "0.8.0"
-  val specs2Version = "3.8.9"
+  // build tools versions
+  val scalaFmtVersion = "1.4.0"
+
+  val circeVersion  = "0.9.0"
+  val specs2Version = "4.0.2"
 
   // resolvers
   val resolvers = Seq(
@@ -25,6 +28,8 @@ object Dependencies {
 trait Dependencies {
 
   val scalaVersionUsed = scalaVersion
+
+  val scalaFmtVersionUsed = scalaFmtVersion
 
   // resolvers
   val commonResolvers = resolvers

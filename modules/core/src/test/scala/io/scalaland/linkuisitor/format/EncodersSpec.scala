@@ -12,31 +12,39 @@ class EncodersSpec extends Specification {
   trait TestDataSerialization extends Scope {
 
     case class TestInner(
-      module: String,
-      page:   Int
+        module: String,
+        page: Int
     )
 
-    implicit val testInnerLinks: LinkProvider[TestInner] = (testInner: TestInner) => Map(
-      "self" -> FlatLinkDetails(s"/api/${testInner.module}/page/${testInner.page}"),
-      "next" -> FlatLinkDetails(s"/api/${testInner.module}/page/${testInner.page + 1}")
-    )
+    implicit val testInnerLinks: LinkProvider[TestInner] =
+      (testInner: TestInner) =>
+        Map(
+          "self" -> FlatLinkDetails(
+            s"/api/${testInner.module}/page/${testInner.page}"),
+          "next" -> FlatLinkDetails(
+            s"/api/${testInner.module}/page/${testInner.page + 1}")
+      )
 
     case class TestOuter(
-      seq: Seq[WithHateoas[TestInner]]
+        seq: Seq[WithHateoas[TestInner]]
     )
 
-    implicit val testOuterLinks: LinkProvider[TestOuter] = (_: TestOuter) => Map(
-      "self" -> GroupedLinkDetails(Seq(
-        FlatLinkDetails("/api/stuff"),
-        FlatLinkDetails("/api/other")
-      ))
+    implicit val testOuterLinks: LinkProvider[TestOuter] = (_: TestOuter) =>
+      Map(
+        "self" -> GroupedLinkDetails(
+          Seq(
+            FlatLinkDetails("/api/stuff"),
+            FlatLinkDetails("/api/other")
+          ))
     )
 
-    val testOuter = WithHateoas(TestOuter(Seq(
-      WithHateoas(TestInner("fizz", 1)),
-      WithHateoas(TestInner("buzz", 2)),
-      WithHateoas(TestInner("bar", 3))
-    )))
+    val testOuter = WithHateoas(
+      TestOuter(
+        Seq(
+          WithHateoas(TestInner("fizz", 1)),
+          WithHateoas(TestInner("buzz", 2)),
+          WithHateoas(TestInner("bar", 3))
+        )))
   }
 
   "plain HATEOAS" should {
@@ -46,7 +54,8 @@ class EncodersSpec extends Specification {
       import io.scalaland.linkuisitor.format.plain._
 
       // when
-      val result = testOuter.asJson.pretty(Printer.spaces2.copy(dropNullKeys = true))
+      val result =
+        testOuter.asJson.pretty(Printer.spaces2.copy(dropNullValues = true))
 
       // then
       result mustEqual
@@ -124,7 +133,8 @@ class EncodersSpec extends Specification {
       import io.scalaland.linkuisitor.format.hal._
 
       // when
-      val result = testOuter.asJson.pretty(Printer.spaces2.copy(dropNullKeys = true))
+      val result =
+        testOuter.asJson.pretty(Printer.spaces2.copy(dropNullValues = true))
 
       // then
       result mustEqual

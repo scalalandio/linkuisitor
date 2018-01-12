@@ -1,15 +1,11 @@
 import com.typesafe.sbt.GitVersioning
-import com.typesafe.sbt.SbtGit.git
-import com.typesafe.sbt.SbtScalariform._
 import sbt.TestFrameworks.Specs2
 import sbt.Tests.Argument
 import sbt._
 import sbt.Keys._
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys.{format => scalariformFormat}
-
-import scalariform.formatter.preferences._
+import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import scoverage.ScoverageSbtPlugin
-import org.scalastyle.sbt.ScalastylePlugin._
+import org.scalastyle.sbt.ScalastylePlugin.autoImport._
 import wartremover._
 
 object Settings extends Dependencies {
@@ -17,15 +13,13 @@ object Settings extends Dependencies {
   val FunctionalTest: Configuration = config("fun") extend Test describedAs "Runs only functional tests"
 
   private val commonSettings = Seq(
-    organization    := "io.scalaland",
-    git.baseVersion := "0.2.0",
-
+    organization := "io.scalaland",
     scalaVersion := scalaVersionUsed
   )
 
   private val rootSettings = commonSettings
 
-  private val modulesSettings = scalariformSettings ++ commonSettings ++ Seq(
+  private val modulesSettings = commonSettings ++ Seq(
     scalacOptions ++= Seq(
       "-target:jvm-1.8",
       "-encoding", "UTF-8",
@@ -42,6 +36,7 @@ object Settings extends Dependencies {
       "-Ywarn-extra-implicit",
       "-Ywarn-inaccessible",
       "-Ywarn-infer-any",
+      "-Ywarn-macros:after",
       "-Ywarn-nullary-override",
       "-Ywarn-nullary-unit",
       "-Ywarn-numeric-widen",
@@ -51,8 +46,8 @@ object Settings extends Dependencies {
       "-Ywarn-unused:params",
       "-Ywarn-unused:patvars",
       "-Ywarn-unused:privates",
-      "-Xfuture",
       "-Xfatal-warnings",
+      "-Xfuture",
       "-Xlint",
       "-Xlint:adapted-args",
       "-Xlint:by-name-right-associative",
@@ -73,30 +68,31 @@ object Settings extends Dependencies {
       "-Xlint:unsound-match"
     ),
     scalacOptions in (Compile, console) --= Seq(
+      "-Xlint",
+      "-Ywarn-unused:implicits",
       "-Ywarn-unused:imports",
+      "-Ywarn-unused:locals",
+      "-Ywarn-unused:params",
+      "-Ywarn-unused:patvars",
+      "-Ywarn-unused:privates",
       "-Xfatal-warnings"
     ),
 
     resolvers ++= commonResolvers,
 
     libraryDependencies ++= mainDeps,
-    libraryDependencies ++= testDeps map (_ % Test),
 
-    ScalariformKeys.preferences := ScalariformKeys.preferences.value
-      .setPreference(AlignArguments, true)
-      .setPreference(AlignParameters, true)
-      .setPreference(AlignSingleLineCaseStatements, true)
-      .setPreference(DoubleIndentClassDeclaration, true)
-      .setPreference(IndentLocalDefs, false)
-      .setPreference(PreserveSpaceBeforeArguments, true),
+    scalafmtOnCompile in Compile := true,
 
     scalastyleFailOnError := true,
 
     wartremoverWarnings in (Compile, compile) ++= Warts.allBut(
       Wart.Any,
+      Wart.DefaultArguments,
       Wart.ExplicitImplicitTypes,
       Wart.ImplicitConversion,
       Wart.ImplicitParameter,
+      Wart.Overloading,
       Wart.PublicInference,
       Wart.NonUnitStatements,
       Wart.Nothing
@@ -108,10 +104,10 @@ object Settings extends Dependencies {
     protected def configure(requiresFork: Boolean): Project = project
       .configs(config)
       .settings(inConfig(config)(Defaults.testSettings): _*)
-      .settings(inConfig(config)(configScalariformSettings))
-      .settings(compileInputs in (config, compile) :=
-        ((compileInputs in (config, compile)) dependsOn (scalariformFormat in config)).value
-      )
+      .settings(inConfig(config)(scalafmtSettings))
+      .settings(scalafmtOnCompile in config := true)
+      .settings(scalastyleConfig in config := baseDirectory.value / "scalastyle-test-config.xml")
+      .settings(scalastyleFailOnError in config := false)
       .settings(fork in config := requiresFork)
       .settings(testFrameworks := Seq(Specs2))
       .settings(libraryDependencies ++= testDeps map (_ % config.name))

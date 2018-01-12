@@ -2,13 +2,14 @@ import sbt._
 import Settings._
 
 scalaVersion in ThisBuild := scalaVersionUsed
+scalafmtVersion in ThisBuild := scalaFmtVersionUsed
 
 lazy val root = project.root
   .configureRoot
   .aggregate(core)
   .settings(
-    publish := (),
-    publishLocal := (),
+    publish := { () },
+    publishLocal := { () },
     publishArtifact := false
   )
 

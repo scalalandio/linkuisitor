@@ -1,4 +1,4 @@
-SbtTestTasks="coverage lock test it:test coverageReport coverageAggregate scalastyle"
+SbtTestTasks="coverage lock test coverageReport coverageAggregate scalastyle"
 
 alias \
   sbtTestAll="sbt $SbtTestTasks " \

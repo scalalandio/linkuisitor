@@ -3,7 +3,12 @@ package io.scalaland.linkuisitor.format
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import io.scalaland.linkuisitor.{ FlatLinkDetails, GroupedLinkDetails, LinkDetails, WithHateoas }
+import io.scalaland.linkuisitor.{
+  FlatLinkDetails,
+  GroupedLinkDetails,
+  LinkDetails,
+  WithHateoas
+}
 
 trait hal {
 
@@ -12,8 +17,11 @@ trait hal {
     case ld: GroupedLinkDetails => ld.group.asJson
   }
 
-  implicit def linkedEncoder[T: Encoder]: Encoder[WithHateoas[T]] = (linked: WithHateoas[T]) =>
-    Encoder[T].apply(linked.entity).withObject(_.add("_links", linked.links.asJson).asJson)
+  implicit def linkedEncoder[T: Encoder]: Encoder[WithHateoas[T]] =
+    (linked: WithHateoas[T]) =>
+      Encoder[T]
+        .apply(linked.entity)
+        .withObject(_.add("_links", linked.links.asJson).asJson)
 }
 
 object hal extends hal
