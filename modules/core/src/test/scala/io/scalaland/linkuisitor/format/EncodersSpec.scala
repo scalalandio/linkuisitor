@@ -15,6 +15,10 @@ class EncodersSpec extends Specification {
         module: String,
         page: Int
     )
+    implicit val entityEncoder: Encoder[TestInner] = (to: TestInner) => Json.obj(
+      "module" -> to.module.asJson,
+      "page" -> to.page.asJson
+    )
 
     implicit val testInnerLinks: LinkProvider[TestInner] =
       (testInner: TestInner) =>
@@ -26,13 +30,18 @@ class EncodersSpec extends Specification {
       )
 
     case class TestOuter(
-        seq: Seq[WithHateoas[TestInner]]
+        seq: List[WithHateoas[TestInner]]
     )
+    object TestOuter {
+
+      implicit def encoder(implicit whti: Encoder[WithHateoas[TestInner]]): Encoder[TestOuter] = to =>
+        Json.obj("seq" -> Json.arr(to.seq.map(_.asJson): _*))
+    }
 
     implicit val testOuterLinks: LinkProvider[TestOuter] = (_: TestOuter) =>
       Map(
         "self" -> GroupedLinkDetails(
-          Seq(
+          List(
             FlatLinkDetails("/api/stuff"),
             FlatLinkDetails("/api/other")
           ))
@@ -40,7 +49,7 @@ class EncodersSpec extends Specification {
 
     val testOuter = WithHateoas(
       TestOuter(
-        Seq(
+        List(
           WithHateoas(TestInner("fizz", 1)),
           WithHateoas(TestInner("buzz", 2)),
           WithHateoas(TestInner("bar", 3))

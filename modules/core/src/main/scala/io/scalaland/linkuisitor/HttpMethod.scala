@@ -1,6 +1,8 @@
 package io.scalaland.linkuisitor
 
-sealed trait HttpMethod {
+import io.circe.Encoder
+
+sealed trait HttpMethod extends Product with Serializable {
   val name: String; override def toString: String = name
 }
 object HttpMethod {
@@ -13,4 +15,6 @@ object HttpMethod {
   case object OPTIONS extends HttpMethod { val name = "OPTIONS" }
   val values: Set[HttpMethod] =
     Set[HttpMethod](GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS)
+
+  implicit val encoder: Encoder[HttpMethod] = Encoder[String].contramap(_.name)
 }

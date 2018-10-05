@@ -1,6 +1,6 @@
 package io.scalaland.linkuisitor
 
-sealed trait LinkDetails
+sealed trait LinkDetails extends Product with Serializable
 
 @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
 final case class FlatLinkDetails(
@@ -10,5 +10,5 @@ final case class FlatLinkDetails(
 ) extends LinkDetails
 
 final case class GroupedLinkDetails(
-    group: Seq[FlatLinkDetails]
+    group: List[FlatLinkDetails]
 ) extends LinkDetails
