@@ -2,12 +2,19 @@
 
 [![Build Status](https://travis-ci.org/scalalandio/linkuisitor.svg?branch=master)](https://travis-ci.org/scalalandio/linkuisitor)
 [![Maven Central](https://img.shields.io/maven-central/v/io.scalaland/linkuisitor-core_2.12.svg)](http://search.maven.org/#search%7Cga%7C1%7Clinkuisitor)
+[![License](http://img.shields.io/:license-Apache%202-green.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 Plebeian-simple library for generating HATEOAS JSONs with Circe.
 
 ## Adding to project
 
-    libraryDependencies += "io.scalaland" %% "linkuisitor-core" % "0.3.0"
+Scala 2.11, 2.12, 2.13.0-M4:
+
+    libraryDependencies += "io.scalaland" %% "linkuisitor-core" % "0.4.0"
+
+Scala.js
+
+    libraryDependencies += "io.scalaland" %%% "linkuisitor-core" % "0.4.0"
 
 ## Usage
 
