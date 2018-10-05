@@ -1,11 +1,12 @@
-import com.typesafe.sbt.GitVersioning
-import sbt.TestFrameworks.Specs2
-import sbt.Tests.Argument
 import sbt._
 import sbt.Keys._
+import sbt.TestFrameworks.Specs2
+import sbt.Tests.Argument
+import com.typesafe.sbt._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
-import scoverage.ScoverageSbtPlugin
 import org.scalastyle.sbt.ScalastylePlugin.autoImport._
+import sbtcrossproject.CrossProject
+import scoverage._
 import wartremover._
 
 object Settings extends Dependencies {
@@ -14,24 +15,36 @@ object Settings extends Dependencies {
 
   private val commonSettings = Seq(
     organization := "io.scalaland",
-    scalaVersion := scalaVersionUsed
+
+    scalaOrganization  := scalaOrganizationUsed,
+    scalaVersion       := scalaVersionUsed,
+    crossScalaVersions := crossScalaVersionsUsed,
+
+    scalafmtVersion := scalaFmtVersionUsed
   )
 
   private val rootSettings = commonSettings
 
   private val modulesSettings = commonSettings ++ Seq(
     scalacOptions ++= Seq(
+      // standard settings
       "-target:jvm-1.8",
       "-encoding", "UTF-8",
       "-unchecked",
       "-deprecation",
       "-explaintypes",
       "-feature",
+      // language features
       "-language:existentials",
       "-language:higherKinds",
       "-language:implicitConversions",
       "-language:postfixOps",
+      // private options
+      "-Xexperimental",
+      "-Ybackend-parallelism", "8",
       "-Yno-adapted-args",
+      "-Ypartial-unification",
+      // warnings
       "-Ywarn-dead-code",
       "-Ywarn-extra-implicit",
       "-Ywarn-inaccessible",
@@ -41,14 +54,14 @@ object Settings extends Dependencies {
       "-Ywarn-nullary-unit",
       "-Ywarn-numeric-widen",
       "-Ywarn-unused:implicits",
-      "-Ywarn-unused:imports",
-      "-Ywarn-unused:locals",
-      "-Ywarn-unused:params",
       "-Ywarn-unused:patvars",
       "-Ywarn-unused:privates",
+      "-Ywarn-value-discard",
+      // advanced options
+      "-Xcheckinit",
       "-Xfatal-warnings",
       "-Xfuture",
-      "-Xlint",
+      // linting
       "-Xlint:adapted-args",
       "-Xlint:by-name-right-associative",
       "-Xlint:constant",
@@ -66,28 +79,52 @@ object Settings extends Dependencies {
       "-Xlint:stars-align",
       "-Xlint:type-parameter-shadow",
       "-Xlint:unsound-match"
+    ).filterNot(
+      (if (scalaVersion.value.startsWith("2.13")) Set(
+        // removed in 2.13.x
+        "-Yno-adapted-args",
+        "-Ypartial-unification",
+        // only for 2.11.x
+        "-Xexperimental"
+      ) else if (scalaVersion.value.startsWith("2.12")) Set(
+        // only for 2.11.x
+        "-Xexperimental"
+      ) else if (scalaVersion.value.startsWith("2.11")) Set(
+        // added in 2.12.x
+        "-Ybackend-parallelism", "8",
+        "-Ywarn-extra-implicit",
+        "-Ywarn-macros:after",
+        "-Ywarn-unused:implicits",
+        "-Ywarn-unused:patvars",
+        "-Ywarn-unused:privates",
+        "-Xlint:constant"
+      ) else Set.empty[String]).contains _
     ),
-    scalacOptions in (Compile, console) --= Seq(
-      "-Xlint",
+    console / scalacOptions --= Seq(
+      // warnings
       "-Ywarn-unused:implicits",
       "-Ywarn-unused:imports",
       "-Ywarn-unused:locals",
       "-Ywarn-unused:params",
       "-Ywarn-unused:patvars",
       "-Ywarn-unused:privates",
-      "-Xfatal-warnings"
+      // advanced options
+      "-Xfatal-warnings",
+      // linting
+      "-Xlint"
     ),
+
+    Global / cancelable := true,
 
     resolvers ++= commonResolvers,
 
-    libraryDependencies ++= mainDeps,
-
-    scalafmtOnCompile in Compile := true,
+    Compile / scalafmtOnCompile := true,
 
     scalastyleFailOnError := true,
 
-    wartremoverWarnings in (Compile, compile) ++= Warts.allBut(
+    Compile / compile / wartremoverWarnings ++= Warts.allBut(
       Wart.Any,
+      Wart.AsInstanceOf,
       Wart.DefaultArguments,
       Wart.ExplicitImplicitTypes,
       Wart.ImplicitConversion,
@@ -95,37 +132,103 @@ object Settings extends Dependencies {
       Wart.Overloading,
       Wart.PublicInference,
       Wart.NonUnitStatements,
-      Wart.Nothing
+      Wart.Nothing,
+      Wart.Serializable,
+      Wart.ToString
     )
+  ) ++ mainDeps
+
+  private val publishSettings = Seq(
+    homepage := Some(url("https://scalaland.io")),
+    licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    scmInfo := Some(
+      ScmInfo(url("https://github.com/scalalandio/linquisitor"), "scm:git:git@github.com:scalalandio/linquisitor.git")
+    ),
+    publishTo := {
+      val nexus = "https://oss.sonatype.org/"
+      if (isSnapshot.value)
+        Some("snapshots" at nexus + "content/repositories/snapshots")
+      else
+        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    },
+    publishMavenStyle := true,
+    publishArtifact in Test := false,
+    pomIncludeRepository := { _ =>
+      false
+    },
+    pomExtra :=
+      <developers>
+        <developer>
+          <id>krzemin</id>
+          <name>Piotr Krzemiński</name>
+          <url>https://github.com/krzemin</url>
+        </developer>
+        <developer>
+          <id>MateuszKubuszok</id>
+          <name>Mateusz Kubuszok</name>
+          <url>https://github.com/MateuszKubuszok</url>
+        </developer>
+      </developers>
   )
 
-  abstract class TestConfigurator(project: Project, config: Configuration) {
+  private val noPublishSettings =
+    Seq(skip in publish := true, publishArtifact := false)
+  implicit class PublishRootConfigurator(project: Project) {
 
-    protected def configure(requiresFork: Boolean): Project = project
-      .configs(config)
-      .settings(inConfig(config)(Defaults.testSettings): _*)
-      .settings(inConfig(config)(scalafmtSettings))
-      .settings(scalafmtOnCompile in config := true)
-      .settings(scalastyleConfig in config := baseDirectory.value / "scalastyle-test-config.xml")
-      .settings(scalastyleFailOnError in config := false)
-      .settings(fork in config := requiresFork)
-      .settings(testFrameworks := Seq(Specs2))
-      .settings(libraryDependencies ++= testDeps map (_ % config.name))
-      .enablePlugins(ScoverageSbtPlugin)
+    def publish: Project = project
+      .settings(publishSettings)
 
-    protected def configureSequential(requiresFork: Boolean): Project = configure(requiresFork)
-      .settings(testOptions in config += Argument(Specs2, "sequential"))
-      .settings(parallelExecution in config := false)
+    def noPublish: Project = project
+      .settings(noPublishSettings)
   }
 
-  implicit class DataConfigurator(project: Project) {
+  implicit class PublishConfigurator(project: CrossProject) {
+
+    def publish: CrossProject = project
+      .settings(publishSettings)
+
+    def noPublish: CrossProject = project
+      .settings(noPublishSettings)
+  }
+
+  abstract class TestConfigurator(project: CrossProject, config: Configuration) {
+
+    protected def configure(requiresFork: Boolean): CrossProject = project
+      .settings(inConfig(config)(scalafmtSettings))
+      .settings(inConfig(config)(Seq(
+        scalafmtOnCompile := true,
+        scalastyleConfig := baseDirectory.value / "scalastyle-test-config.xml",
+        scalastyleFailOnError := false,
+        fork := requiresFork,
+        testFrameworks := Seq(Specs2)
+      )))
+      .enablePlugins(ScoverageSbtPlugin)
+
+    protected def configureSequential(requiresFork: Boolean): CrossProject = configure(requiresFork)
+      .settings(inConfig(config)(Seq(
+        testOptions += Argument(Specs2, "sequential"),
+        parallelExecution  := false
+      )))
+  }
+
+  implicit class RootDataConfigurator(project: Project) {
 
     def setName(newName: String): Project = project.settings(name := newName)
 
     def setDescription(newDescription: String): Project = project.settings(description := newDescription)
 
-    def setInitialCommand(newInitialCommand: String): Project =
-      project.settings(initialCommands := s"import io.scalaland.linkuisitor.$newInitialCommand")
+    def setInitialImport(newInitialCommand: String): Project =
+      project.settings(initialCommands := s"import io.scalaland.enumz._, $newInitialCommand")
+  }
+
+  implicit class DataConfigurator(project: CrossProject) {
+
+    def setName(newName: String): CrossProject = project.settings(name := newName)
+
+    def setDescription(newDescription: String): CrossProject = project.settings(description := newDescription)
+
+    def setInitialImport(newInitialCommand: String): CrossProject =
+      project.settings(initialCommands := s"import io.scalaland.enumz._, $newInitialCommand")
   }
 
   implicit class RootConfigurator(project: Project) {
@@ -133,29 +236,15 @@ object Settings extends Dependencies {
     def configureRoot: Project = project.settings(rootSettings: _*)
   }
 
-  implicit class ModuleConfigurator(project: Project) {
+  implicit class ModuleConfigurator(project: CrossProject) {
 
-    def configureModule: Project = project.settings(modulesSettings: _*).enablePlugins(GitVersioning)
+    def configureModule: CrossProject = project.settings(modulesSettings: _*).enablePlugins(GitVersioning)
   }
 
-  implicit class UnitTestConfigurator(project: Project) extends TestConfigurator(project, Test) {
+  implicit class UnitTestConfigurator(project: CrossProject) extends TestConfigurator(project, Test) {
 
-    def configureTests(requiresFork: Boolean = false): Project = configure(requiresFork)
+    def configureTests(requiresFork: Boolean = false): CrossProject = configure(requiresFork)
 
-    def configureTestsSequential(requiresFork: Boolean = false): Project = configureSequential(requiresFork)
-  }
-
-  implicit class FunctionalTestConfigurator(project: Project) extends TestConfigurator(project, FunctionalTest) {
-
-    def configureFunctionalTests(requiresFork: Boolean = false): Project = configure(requiresFork)
-
-    def configureFunctionalTestsSequential(requiresFork: Boolean = false): Project = configureSequential(requiresFork)
-  }
-
-  implicit class IntegrationTestConfigurator(project: Project) extends TestConfigurator(project, IntegrationTest) {
-
-    def configureIntegrationTests(requiresFork: Boolean = false): Project = configure(requiresFork)
-
-    def configureIntegrationTestsSequential(requiresFork: Boolean = false): Project = configureSequential(requiresFork)
+    def configureTestsSequential(requiresFork: Boolean = false): CrossProject = configureSequential(requiresFork)
   }
 }
