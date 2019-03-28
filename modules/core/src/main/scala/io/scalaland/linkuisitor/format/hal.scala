@@ -7,9 +7,9 @@ import io.scalaland.linkuisitor.{ FlatLinkDetails, GroupedLinkDetails, LinkDetai
 trait hal {
 
   implicit val fldEncoder: Encoder[FlatLinkDetails] = fld => Json.obj(
-    "href" -> fld.href.asJson,
-    "method" -> fld.method.asJson,
-    "templated" -> fld.templated.asJson
+    Seq("href" -> fld.href.asJson) ++
+    fld.method.toList.map(m => "method" -> m.asJson) ++
+    fld.templated.toList.map(t => "templated" -> t.asJson): _*
   )
   implicit val gldEncoder: Encoder[GroupedLinkDetails] = Encoder[List[FlatLinkDetails]].contramap(_.group)
   implicit val ldEncoder: Encoder[LinkDetails] = {
