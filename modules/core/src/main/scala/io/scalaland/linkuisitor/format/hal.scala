@@ -21,7 +21,10 @@ trait hal {
     (linked: WithHateoas[T]) =>
       Encoder[T]
         .apply(linked.entity)
-        .withObject(_.add("_links", linked.links.asJson).asJson)
+        .withObject(obj => {
+          if (linked.links.isEmpty) obj
+          else obj.add("_links", linked.links.asJson)
+        }.asJson)
 }
 
 object hal extends hal
