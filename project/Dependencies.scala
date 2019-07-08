@@ -9,14 +9,14 @@ object Dependencies {
 
   // scala version
   val scalaOrganization  = "org.scala-lang" // "org.typelevel"
-  val scalaVersion       = "2.12.7" // "2.12.4-bin-typelevel-4"
-  val crossScalaVersions = Seq("2.11.12", "2.12.7", "2.13.0-M4")
+  val scalaVersion       = "2.12.8" // "2.12.4-bin-typelevel-4"
+  val crossScalaVersions = Seq("2.11.12", "2.12.8", "2.13.0")
 
   // build tools versions
-  val scalaFmtVersion = "1.4.0"
+  val scalaFmtVersion = "1.5.1"
 
-  val circeVersion  = "0.10.0"
-  val specs2Version = "4.3.3"
+  val circeVersion  = "0.11.1"
+  val specs2Version = "4.6.0"
 
   // resolvers
   val resolvers = Seq(
